@@ -1070,21 +1070,28 @@ function cpEval(v,r,c){
         let s=0;
         for(let rr=+ra-1;rr<=+rb-1;rr++)
           for(let cc=CP_CN.indexOf(ca);cc<=CP_CN.indexOf(cb);cc++)
-            s+=parseFloat(String(cpD[cpk(rr,cc)]?.v||'0').replace(/\./g,''))||0;
+            s+=cpNum(cpD[cpk(rr,cc)]?.v)||0;
         return s;
       });
       e=e.replace(/([A-Z]+)(\d+)/g,(_,col,row)=>{
         const rr=+row-1,cc=CP_CN.indexOf(col);
-        return parseFloat(String(cpD[cpk(rr,cc)]?.v||'0').replace(/\./g,''))||0;
+        return cpNum(cpD[cpk(rr,cc)]?.v)||0;
       });
       const res=Function('"use strict";return('+e+')')();
       if(!isFinite(res)||isNaN(res))return'#ERR';
       return Number.isInteger(res)?res.toLocaleString('es-CO'):parseFloat(res.toFixed(2)).toLocaleString('es-CO');
     }catch(err){return'#ERR';}
   }
-  const n=parseFloat(String(v||'').replace(/[\.,]/g,''));
-  if(!isNaN(n)&&String(v).trim()!=='')return n.toLocaleString('es-CO');
+  const n=cpNum(v);
+  if(n!==null)return n.toLocaleString('es-CO');
   return v||'';
+}
+function cpNum(v){
+  if(v===null||v===undefined||String(v).trim()==='')return null;
+  // strip thousands separators (dots in es-CO) and parse
+  const s=String(v).trim().replace(/\./g,'').replace(',','.');
+  const n=parseFloat(s);
+  return isNaN(n)?null:n;
 }
 
 window.cpFmt=t=>{
