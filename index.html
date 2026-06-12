@@ -1084,7 +1084,15 @@ function cpBgColor(bg){
 }
 
 window.cpEditLive=()=>{
-  // Solo actualiza la barra fx — la celda muestra el valor formateado, no el raw
+  const inp=document.getElementById('cp-inp');
+  if(!inp)return;
+  const v=inp.value;
+  // Guardar en cpD sin formatear
+  if(!cpD[cpk(cpAnc.r,cpAnc.c)])cpD[cpk(cpAnc.r,cpAnc.c)]={v:'',bold:false,bg:'',hl:false};
+  cpD[cpk(cpAnc.r,cpAnc.c)].v=v;
+  // Mostrar en celda: si es número, formatear; si no, mostrar raw
+  const sp=document.getElementById('cpsp'+cpAnc.r+'_'+cpAnc.c);
+  if(sp)sp.textContent=cpEval(v,cpAnc.r,cpAnc.c);
 };
 
 window.cpEditKey=e=>{
