@@ -999,7 +999,16 @@ function cpMoveAnc(dr,dc){
 }
 function cpSetCell(r,c,v){
   if(!cpD[cpk(r,c)])cpD[cpk(r,c)]={v:'',bold:false,bg:'',hl:false};
-  cpD[cpk(r,c)].v=v;
+  // Always save raw value: if it looks like a formatted number, strip dots
+  let raw=v;
+  if(typeof v==='string'&&!v.startsWith('=')){
+    // Check if it's a formatted number like "1.700.000" - strip dots and re-check
+    const stripped=v.replace(/\./g,'');
+    if(!isNaN(parseFloat(stripped))&&stripped.trim()!==''){
+      raw=stripped; // save as raw number string
+    }
+  }
+  cpD[cpk(r,c)].v=raw;
   cpRefresh(r,c);
   cpAutoSave();
 }
